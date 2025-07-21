@@ -1,91 +1,101 @@
-'use client';
+// Login.tsx
+"use client";
 
-import { useState } from 'react';
+import { signIn } from "next-auth/react";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { FcGoogle } from "react-icons/fc";
+import { FaFacebook, FaGithub } from "react-icons/fa";
 
-export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export default function Login() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Hook into your login API
-    console.log({ email, password });
+    const res = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    });
+
+    if (res?.error) {
+      setError("Invalid email or password");
+    } else {
+      router.push("/dashboard");
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-white to-gray-100 px-4">
-      <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-md">
-        <h2 className="text-2xl font-bold text-center mb-6">Welcome Back</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-200 px-4">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 space-y-6">
+        <h2 className="text-3xl font-bold text-center text-gray-800">Welcome Back</h2>
+        <p className="text-center text-gray-500">Please log in to continue</p>
 
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
+            <label className="block mb-1 text-sm text-gray-600">Email</label>
             <input
               type="email"
-              placeholder="Email"
+              className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
-            />
-          </div>
-          <div>
-            <input
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
 
-          <div className="flex items-center justify-between text-sm text-gray-600">
-            <label className="flex items-center">
-              <input type="checkbox" className="mr-2" />
-              Remember me
-            </label>
-            <a href="#" className="text-blue-600 hover:underline">
-              Forgot password?
-            </a>
+          <div>
+            <label className="block mb-1 text-sm text-gray-600">Password</label>
+            <input
+              type="password"
+              className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
           </div>
+
+          <div className="flex justify-between text-sm text-gray-600">
+            <label>
+              <input type="checkbox" className="mr-2" /> Remember me
+            </label>
+            <a href="#" className="hover:underline">Forgot password?</a>
+          </div>
+
+          {error && <p className="text-red-500 text-sm">{error}</p>}
 
           <button
             type="submit"
-            className="w-full bg-gray-800 text-white py-3 rounded-lg font-semibold hover:bg-gray-700 transition"
+            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-lg transition duration-150"
           >
-            Login
+            Log In
           </button>
         </form>
 
-        <div className="flex items-center my-6">
-          <hr className="flex-grow border-gray-300" />
-          <span className="mx-4 text-gray-500 text-sm">Or continue with</span>
-          <hr className="flex-grow border-gray-300" />
+        <div className="flex items-center my-4">
+          <div className="flex-grow h-px bg-gray-300"></div>
+          <span className="px-3 text-sm text-gray-500">or continue with</span>
+          <div className="flex-grow h-px bg-gray-300"></div>
         </div>
 
-        <div className="flex justify-between items-center gap-3 mb-4">
-          <SocialIcon src="/icons/google.svg" alt="Google" />
-          <SocialIcon src="/icons/facebook.svg" alt="Facebook" />
-          <SocialIcon src="/icons/x.svg" alt="X" />
-          <SocialIcon src="/icons/snapchat.svg" alt="Snapchat" />
-          <SocialIcon src="/icons/discord.svg" alt="Discord" />
+        <div className="flex justify-center gap-4">
+          <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 shadow">
+            <FcGoogle size={24} />
+          </button>
+          <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 shadow">
+            <FaFacebook size={24} className="text-blue-600" />
+          </button>
+          <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 shadow">
+            <FaGithub size={24} />
+          </button>
         </div>
 
-        <p className="text-center text-sm text-gray-600">
-          Don&apos;t have an account?{' '}
-          <a href="/signup" className="text-blue-600 font-medium hover:underline">
-            Sign up
-          </a>
+        <p className="text-center text-sm text-gray-500">
+          Don’t have an account? <a href="/signup" className="text-indigo-600 hover:underline">Sign up</a>
         </p>
       </div>
     </div>
-  );
-}
-
-function SocialIcon({ src, alt }: { src: string; alt: string }) {
-  return (
-    <button className="p-3 border border-gray-300 rounded-lg hover:bg-gray-50">
-      <img src={src} alt={alt} className="w-6 h-6" />
-    </button>
   );
 }
