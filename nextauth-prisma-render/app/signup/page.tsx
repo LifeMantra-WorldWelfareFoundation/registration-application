@@ -1,88 +1,86 @@
-'use client'
+"use client";
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { FcGoogle } from 'react-icons/fc';
-import { FaFacebook, FaGithub } from 'react-icons/fa';
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+
+import TextInput from "@/components/TextInput";
+import OAuthButtonGroup from "@/components/OAuthButtonGroup";
+import { FaUser, FaLock } from "react-icons/fa";
 
 export default function SignUp() {
   const router = useRouter();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const res = await fetch('/api/signup', {
-      method: 'POST',
+    const res = await fetch("/api/signup", {
+      method: "POST",
       body: JSON.stringify({ email, password }),
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
 
     if (res.ok) {
-      router.push('/login');
+      router.push("/login");
     } else {
-      alert('Signup failed');
+      alert("Signup failed");
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-200 px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 space-y-6">
-        <h2 className="text-3xl font-bold text-center text-gray-800">Create an Account</h2>
-        <p className="text-center text-gray-500">Enter your details to sign up</p>
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-[#0e1e36] px-4">
 
-        <form onSubmit={handleSignUp} className="space-y-4">
-          <div>
-            <label className="block mb-1 text-sm text-gray-600">Email</label>
-            <input
-              type="email"
-              className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
-            />
-          </div>
+      <div className="w-full max-w-md rounded-3xl border border-white/10 bg-gradient-to-b from-white/10 to-white/5 p-8 shadow-[0_8px_32px_0_rgba(255,255,255,0.1)] backdrop-blur-2xl [box-shadow:inset_0_1px_0_rgba(255,255,255,0.2)]">
+        <h1 className="mb-6 text-center text-3xl font-bold text-white sm:text-4xl">
+          Create an Account
+        </h1>
 
-          <div>
-            <label className="block mb-1 text-sm text-gray-600">Password</label>
-            <input
-              type="password"
-              className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-            />
-          </div>
+        <form onSubmit={handleSignUp} className="space-y-6">
+          <TextInput
+            id="email"
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            icon={<FaUser />}
+            autoComplete="email"
+            required
+          />
+          <TextInput
+            id="password"
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            icon={<FaLock />}
+            autoComplete="new-password"
+            required
+          />
 
           <button
             type="submit"
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-lg transition duration-150"
+            className="w-full rounded-xl bg-white/20 px-4 py-3 font-semibold text-white shadow-lg backdrop-blur transition hover:bg-white/30 focus:outline-none focus:ring-2 focus:ring-white/50"
           >
             Sign Up
           </button>
         </form>
 
-        <div className="flex items-center my-4">
-          <div className="flex-grow h-px bg-gray-300"></div>
-          <span className="px-3 text-sm text-gray-500">or continue with</span>
-          <div className="flex-grow h-px bg-gray-300"></div>
+        <div className="my-8 flex items-center">
+          <div className="flex-grow border-t border-white/10"></div>
+          <span className="mx-4 flex-shrink text-sm text-neutral-300">
+            Or continue with
+          </span>
+          <div className="flex-grow border-t border-white/10"></div>
         </div>
 
-        <div className="flex justify-center gap-4">
-          <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 shadow">
-            <FcGoogle size={24} />
-          </button>
-          <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 shadow">
-            <FaFacebook size={24} className="text-blue-600" />
-          </button>
-          <button className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 shadow">
-            <FaGithub size={24} />
-          </button>
-        </div>
+        <OAuthButtonGroup />
 
-        <p className="text-center text-sm text-gray-500">
-          Already have an account? <a href="/login" className="text-indigo-600 hover:underline">Log in</a>
+        <p className="mt-8 text-center text-sm text-neutral-400">
+          Already have an account?{" "}
+          <a href="/login" className="font-medium text-white hover:underline">
+            Log in
+          </a>
         </p>
       </div>
     </div>
